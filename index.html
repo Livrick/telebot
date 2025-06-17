@@ -2,15 +2,16 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Game WebApp</title>
+  <title>Telegram Game App</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     html, body {
       margin: 0;
       padding: 0;
-      background-color: #471f1f;
-      font-family: Arial, sans-serif;
+      background: #111;
       color: white;
+      font-family: sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -33,8 +34,8 @@
     }
 
     #user-info {
-      display: none;
       text-align: center;
+      display: none;
     }
 
     #login {
@@ -47,58 +48,28 @@
       margin-top: 5px;
       color: #00ff99;
     }
-
-    .test-button {
-      background: #1e88e5;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 10px;
-      color: white;
-      font-size: 16px;
-      margin-top: 20px;
-      cursor: pointer;
-    }
   </style>
 </head>
 <body>
 
   <div class="ball"></div>
 
-  <!-- Telegram Login Button -->
-  <script async src="https://telegram.org/js/telegram-widget.js?7"
-          data-telegram-login="FarklepyBot"  <!-- ← заміни на свого бота -->
-          data-size="large"
-          data-radius="10"
-          data-userpic="false"
-          data-request-access="write"
-          data-on-auth="onTelegramAuth">
-  </script>
-
-  <!-- Тестова кнопка для перевірки -->
-  <button class="test-button" onclick="testLogin()">Тестовий вхід</button>
-
-  <!-- Інфо про користувача -->
   <div id="user-info">
     <div id="login">@username</div>
     <div id="balance">Balance: 0.00$</div>
   </div>
 
   <script>
-    function showUserInfo(username) {
-      document.querySelector('script[src*="telegram-widget"]').style.display = 'none';
-      document.querySelector('.test-button').style.display = 'none';
-      document.querySelector('.ball').style.display = 'none';
+    const tg = window.Telegram.WebApp;
+    tg.expand(); // розгорнути на весь екран
 
-      document.getElementById("login").innerText = '@' + username;
+    if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+      const user = tg.initDataUnsafe.user;
+      document.getElementById("login").innerText = '@' + (user.username || 'unknown');
       document.getElementById("user-info").style.display = 'block';
-    }
-
-    function onTelegramAuth(user) {
-      showUserInfo(user.username || "unknown");
-    }
-
-    function testLogin() {
-      showUserInfo("TestUser123");
+      document.querySelector('.ball').style.display = 'none';
+    } else {
+      document.getElementById("login").innerText = 'Помилка входу';
     }
   </script>
 
