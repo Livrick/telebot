@@ -2,21 +2,29 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Telegram Game App</title>
+  <title>Main Screen</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     html, body {
       margin: 0;
       padding: 0;
-      background: #111;
+      background: #000;
       color: white;
-      font-family: sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      font-family: Arial, sans-serif;
       height: 100vh;
+    }
+
+    .screen {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    #loading-screen {
+      display: flex;
     }
 
     .ball {
@@ -25,7 +33,6 @@
       background: cyan;
       border-radius: 50%;
       animation: jump 1s infinite alternate ease-in-out;
-      margin-bottom: 30px;
     }
 
     @keyframes jump {
@@ -33,43 +40,52 @@
       100% { transform: translateY(-120px); }
     }
 
-    #user-info {
-      text-align: center;
-      display: none;
-    }
-
     #login {
-      font-size: 22px;
-      font-weight: bold;
+      font-size: 24px;
+      margin-bottom: 10px;
     }
 
     #balance {
-      font-size: 18px;
-      margin-top: 5px;
+      font-size: 20px;
       color: #00ff99;
     }
   </style>
 </head>
 <body>
 
-  <div class="ball"></div>
+  <!-- Завантаження -->
+  <div id="loading-screen" class="screen">
+    <div class="ball"></div>
+  </div>
 
-  <div id="user-info">
+  <!-- Головна сторінка -->
+  <div id="main-screen" class="screen">
     <div id="login">@username</div>
     <div id="balance">Balance: 0.00$</div>
   </div>
 
+  <!-- Помилка -->
+  <div id="error-screen" class="screen">
+    <h2>❌ Помилка входу</h2>
+  </div>
+
   <script>
     const tg = window.Telegram.WebApp;
-    tg.expand(); // розгорнути на весь екран
+    tg.expand();
 
-    if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-      const user = tg.initDataUnsafe.user;
-      document.getElementById("login").innerText = '@' + (user.username || 'unknown');
-      document.getElementById("user-info").style.display = 'block';
-      document.querySelector('.ball').style.display = 'none';
+    const user = tg.initDataUnsafe?.user;
+
+    if (user) {
+      // Показуємо головну сторінку
+      document.getElementById("loading-screen").style.display = 'none';
+      document.getElementById("main-screen").style.display = 'flex';
+
+      // Виводимо логін
+      document.getElementById("login").innerText = '@' + (user.username || 'без_імені');
     } else {
-      document.getElementById("login").innerText = 'Помилка входу';
+      // Помилка
+      document.getElementById("loading-screen").style.display = 'none';
+      document.getElementById("error-screen").style.display = 'flex';
     }
   </script>
 
