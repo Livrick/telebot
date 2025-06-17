@@ -2,30 +2,70 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>My WebApp</title>
+  <title>WebApp Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       margin: 0;
-      height: 100vh;
+      padding: 0;
+      background: #000;
+      color: white;
+      font-family: Arial, sans-serif;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
-      background: black;
+      justify-content: center;
+      height: 100vh;
     }
+
+    #user-info {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+    }
+
     .ball {
       width: 100px;
       height: 100px;
       background: cyan;
       border-radius: 50%;
-      animation: jump 1s infinite alternate;
+      animation: jump 1s infinite alternate ease-in-out;
+      margin-bottom: 20px;
     }
+
     @keyframes jump {
       0% { transform: translateY(0); }
-      100% { transform: translateY(-100px); }
+      100% { transform: translateY(-120px); }
     }
   </style>
 </head>
 <body>
+
   <div class="ball"></div>
+
+  <script async src="https://telegram.org/js/telegram-widget.js?7"
+    data-telegram-login="ВАШ_ЮЗЕРНЕЙМ_БОТА"  <!-- ← ЗАМІНИТИ -->
+    data-size="large"
+    data-userpic="true"
+    data-radius="10"
+    data-request-access="write"
+    data-on-auth="onTelegramAuth">
+  </script>
+
+  <div id="user-info">
+    <h2 id="welcome"></h2>
+    <img id="photo" src="" style="border-radius: 50%; width: 80px; height: 80px;" />
+  </div>
+
+  <script>
+    function onTelegramAuth(user) {
+      document.querySelector('script[src*="telegram-widget"]').style.display = 'none';
+      document.getElementById("welcome").innerText = `Привіт, ${user.first_name}!`;
+      document.getElementById("photo").src = user.photo_url;
+      document.getElementById("user-info").style.display = 'flex';
+      console.log("Telegram user:", user);
+    }
+  </script>
+
 </body>
 </html>
