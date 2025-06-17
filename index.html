@@ -53,7 +53,7 @@
 </head>
 <body>
 
-  <!-- Завантаження -->
+  <!-- Екран завантаження -->
   <div id="loading-screen" class="screen">
     <div class="ball"></div>
   </div>
@@ -66,7 +66,7 @@
 
   <!-- Помилка -->
   <div id="error-screen" class="screen">
-    <h2>❌ Помилка входу</h2>
+    <h2>❌ Перенаправляємо на реєстрацію...</h2>
   </div>
 
   <script>
@@ -76,16 +76,33 @@
     const user = tg.initDataUnsafe?.user;
 
     if (user) {
-      // Показуємо головну сторінку
+      // Показуємо головну
       document.getElementById("loading-screen").style.display = 'none';
       document.getElementById("main-screen").style.display = 'flex';
-
-      // Виводимо логін
       document.getElementById("login").innerText = '@' + (user.username || 'без_імені');
+
+      // Надсилаємо користувача на сервер
+      fetch('http://localhost:5000/join', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          id: user.id,
+          username: user.username,
+          first_name: user.first_name
+        })
+      });
+
     } else {
-      // Помилка
+      // Користувача немає — перекидаємо на бота
       document.getElementById("loading-screen").style.display = 'none';
       document.getElementById("error-screen").style.display = 'flex';
+
+      const botUsername = "FarklepyBot";
+      setTimeout(() => {
+        window.location.href = `https://t.me/${botUsername}?start=login`;
+      }, 2000);
     }
   </script>
 
