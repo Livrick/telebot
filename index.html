@@ -2,25 +2,20 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Telegram Login</title>
+  <title>Game WebApp</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body {
-      background-color: #111;
-      color: white;
-      font-family: Arial, sans-serif;
+    html, body {
       margin: 0;
       padding: 0;
+      background-color: #471f1f;
+      font-family: Arial, sans-serif;
+      color: white;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       height: 100vh;
-    }
-
-    #user-info {
-      display: none;
-      text-align: center;
     }
 
     .ball {
@@ -37,14 +32,31 @@
       100% { transform: translateY(-120px); }
     }
 
-    .username {
-      font-size: 20px;
-      margin-bottom: 5px;
+    #user-info {
+      display: none;
+      text-align: center;
     }
 
-    .balance {
+    #login {
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    #balance {
       font-size: 18px;
+      margin-top: 5px;
       color: #00ff99;
+    }
+
+    .test-button {
+      background: #1e88e5;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-size: 16px;
+      margin-top: 20px;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -52,31 +64,41 @@
 
   <div class="ball"></div>
 
+  <!-- Telegram Login Button -->
   <script async src="https://telegram.org/js/telegram-widget.js?7"
-          data-telegram-login="FarklepyBot"  <!-- ← твій бот -->
+          data-telegram-login="FarklepyBot"  <!-- ← заміни на свого бота -->
           data-size="large"
-          data-userpic="false"
           data-radius="10"
+          data-userpic="false"
           data-request-access="write"
           data-on-auth="onTelegramAuth">
   </script>
 
+  <!-- Тестова кнопка для перевірки -->
+  <button class="test-button" onclick="testLogin()">Тестовий вхід</button>
+
+  <!-- Інфо про користувача -->
   <div id="user-info">
-    <div class="username" id="login">@username</div>
-    <div class="balance">Balance: 0.00$</div>
+    <div id="login">@username</div>
+    <div id="balance">Balance: 0.00$</div>
   </div>
 
   <script>
-    function onTelegramAuth(user) {
+    function showUserInfo(username) {
       document.querySelector('script[src*="telegram-widget"]').style.display = 'none';
+      document.querySelector('.test-button').style.display = 'none';
       document.querySelector('.ball').style.display = 'none';
 
-      // Показ логіну
-      const loginDiv = document.getElementById("login");
-      loginDiv.textContent = '@' + user.username;
-
-      // Показ секції
+      document.getElementById("login").innerText = '@' + username;
       document.getElementById("user-info").style.display = 'block';
+    }
+
+    function onTelegramAuth(user) {
+      showUserInfo(user.username || "unknown");
+    }
+
+    function testLogin() {
+      showUserInfo("TestUser123");
     }
   </script>
 
