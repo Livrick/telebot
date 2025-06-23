@@ -1,72 +1,113 @@
 <!DOCTYPE html>
-<html>
+<html lang="uk">
 <head>
   <meta charset="UTF-8">
-  <title>Main Screen</title>
+  <title>Casino App</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     html, body {
       margin: 0;
       padding: 0;
-      background: #000;
-      color: white;
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', sans-serif;
+      background: #0e1c14;
+      color: #dbc56c;
       height: 100vh;
     }
 
-    .screen {
-      display: none;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      height: 100%;
-    }
-
-    #loading-screen {
+    .container {
       display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
     }
 
-    .ball {
-      width: 100px;
-      height: 100px;
-      background: cyan;
-      border-radius: 50%;
-      animation: jump 1s infinite alternate ease-in-out;
+    header {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 18px;
+      padding-bottom: 20px;
     }
 
-    @keyframes jump {
-      0% { transform: translateY(0); }
-      100% { transform: translateY(-120px); }
-    }
-
-    #login {
+    .title {
       font-size: 24px;
-      margin-bottom: 10px;
+      font-weight: bold;
     }
 
-    #balance {
-      font-size: 20px;
-      color: #00ff99;
+    .balance {
+      font-size: 16px;
+      color: #a5f0b3;
+    }
+
+    .chip {
+      width: 80px;
+      height: 80px;
+      margin: 20px 0;
+    }
+
+    .desc {
+      font-size: 14px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .game-list {
+      width: 100%;
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .game-button {
+      background-color: #132218;
+      border: 2px solid #dbc56c;
+      color: #dbc56c;
+      padding: 12px 16px;
+      border-radius: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 16px;
+    }
+
+    .game-button span {
+      opacity: 0.7;
+      font-size: 14px;
+    }
+
+    .action {
+      margin-top: 20px;
+      background: #132218;
+      color: #dbc56c;
+      border: 2px solid #dbc56c;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-size: 16px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
+  <div class="container">
+    <header>
+      <div class="title">Board Games</div>
+      <div class="balance" id="balance">$0.00</div>
+    </header>
 
-  <!-- Завантаження -->
-  <div id="loading-screen" class="screen">
-    <div class="ball"></div>
-  </div>
+    <img class="chip" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Poker_chip_icon.svg/1024px-Poker_chip_icon.svg.png" alt="chip">
+    <div class="desc">PLAY CASINO-STYLE<br>BOARD GAMES FOR MONEY</div>
 
-  <!-- Головна -->
-  <div id="main-screen" class="screen">
-    <div id="login">@username</div>
-    <div id="balance">Balance: 0.00$</div>
-  </div>
+    <div class="game-list">
+      <div class="game-button">Poker <span>12K online</span></div>
+      <div class="game-button">Roulette <span>8.2K online</span></div>
+      <div class="game-button">Blackjack <span>5.5K online</span></div>
+      <div class="game-button">Baccarat <span>3.1K online</span></div>
+    </div>
 
-  <!-- Помилка -->
-  <div id="error-screen" class="screen">
-    <h2>⛔ Переходимо на реєстрацію…</h2>
+    <button class="action" onclick="recharge()">+ Поповнити баланс</button>
   </div>
 
   <script>
@@ -74,13 +115,13 @@
     tg.expand();
 
     const user = tg.initDataUnsafe?.user;
+    const usernameBlock = document.querySelector('.title');
+    const balanceBlock = document.getElementById('balance');
 
     if (user) {
-      document.getElementById("loading-screen").style.display = 'none';
-      document.getElementById("main-screen").style.display = 'flex';
-      document.getElementById("login").innerText = '@' + (user.username || 'без_імені');
-
-      fetch('http://127.0.0.1:5000/join', {
+      usernameBlock.textContent = 'Welcome @' + (user.username || 'без_імені');
+      // simulate loading balance from backend
+      fetch('http://192.168.0.102:5000/join', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -88,15 +129,24 @@
           username: user.username,
           first_name: user.first_name
         })
+      })
+      .then(res => res.json())
+      .then(data => {
+        balanceBlock.textContent = '$' + (data.balance || '127.50');
+      })
+      .catch(() => {
+        balanceBlock.textContent = '$127.50';
       });
     } else {
-      document.getElementById("loading-screen").style.display = 'none';
-      document.getElementById("error-screen").style.display = 'flex';
+      usernameBlock.textContent = '⛔ Redirecting...';
       setTimeout(() => {
         window.location.href = "https://t.me/FarklepyBot?start=login";
       }, 2000);
     }
-  </script>
 
+    function recharge() {
+      alert('Функція поповнення в розробці');
+    }
+  </script>
 </body>
 </html>
